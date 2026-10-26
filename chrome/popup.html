@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Lume</title>
+<style>
+  :root { --bg:#fff; --fg:#1d1d1f; --mut:#6b6f76; --line:#ececec; --card:#f7f7f8; --acc:#ffb300; --accfg:#1d1d1f; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#17191c; --fg:#e8e8ea; --mut:#9aa0a6; --line:#2a2d32; --card:#202328; } }
+  * { box-sizing: border-box; }
+  body { margin:0; width: 360px; font: 13px/1.4 system-ui, "Segoe UI", sans-serif; background: var(--bg); color: var(--fg); }
+  header { display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--line); }
+  header img { width:22px; height:22px; }
+  header b { font-size:15px; flex:1; }
+  .quick { display:grid; grid-template-columns: repeat(4, 1fr); gap:6px; padding:10px 14px; }
+  .quick button { border:1px solid var(--line); background: var(--card); color: var(--fg); border-radius:10px; padding:8px 4px;
+    font-size:11px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .quick button span { font-size:17px; }
+  .quick button:hover { border-color: var(--acc); }
+  details { border-top:1px solid var(--line); }
+  summary { list-style:none; cursor:pointer; padding:10px 14px; display:flex; align-items:center; gap:10px; font-weight:600; }
+  summary::-webkit-details-marker { display:none; }
+  summary .chev { margin-left:auto; color: var(--mut); transition: transform .15s; }
+  details[open] summary .chev { transform: rotate(90deg); }
+  .body { padding: 0 14px 12px; display:grid; gap:10px; }
+  .row { display:flex; align-items:center; gap:10px; }
+  .row label { flex:1; }
+  .row label.sw { flex: none; }
+  .row output { min-width: 42px; text-align:right; color: var(--mut); font-variant-numeric: tabular-nums; }
+  input[type=range] { flex: 1.3; accent-color: var(--acc); }
+  select { flex:1.3; padding:5px; border-radius:8px; border:1px solid var(--line); background: var(--card); color: var(--fg); }
+  .hint { color: var(--mut); font-size: 12px; }
+  .sw { position:relative; width:34px; height:20px; flex: none; }
+  .sw input { opacity:0; width:0; height:0; }
+  .sw i { position:absolute; inset:0; background:#c9c9cc; border-radius:20px; transition:.15s; cursor:pointer; }
+  .sw i::after { content:""; position:absolute; width:16px; height:16px; left:2px; top:2px; background:#fff; border-radius:50%; transition:.15s; }
+  .sw input:checked + i { background: var(--acc); }
+  .sw input:checked + i::after { transform: translateX(14px); }
+  .swatches { display:flex; gap:6px; flex-wrap: wrap; }
+  .swatches button { width:24px; height:24px; border-radius:50%; border:2px solid var(--line); cursor:pointer; }
+  .swatches button.sel { border-color: var(--fg); }
+  .demo { background: var(--card); border-radius: 8px; padding: 8px 10px; }
+  footer { display:flex; gap:8px; padding:10px 14px 14px; border-top:1px solid var(--line); }
+  footer button { flex:1; border:1px solid var(--line); background: transparent; color: var(--fg); border-radius:8px; padding:7px; cursor:pointer; font-size:12px; }
+  .site { padding: 8px 14px; display:flex; align-items:center; gap:10px; color: var(--mut); border-top: 1px solid var(--line); }
+  .site span { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+</style>
+</head>
+<body>
+<header>
+  <img src="icons/icon48.png" alt="">
+  <b>Lume</b>
+  <label class="sw" title="Liga/desliga tudo"><input type="checkbox" data-k="enabled"><i></i></label>
+</header>
+
+<div class="quick">
+  <button id="qReader"><span>📖</span>Modo leitor</button>
+  <button id="qTts"><span>🔊</span>Ler alto</button>
+  <button id="qNotes"><span>✎</span>Marcações</button>
+  <button id="qTimer"><span>⏱</span>Timer</button>
+</div>
+
+<details open>
+  <summary>Bionic reading <label class="sw"><input type="checkbox" data-k="bionic.on"><i></i></label><span class="chev">›</span></summary>
+  <div class="body">
+    <div class="demo" id="bionicDemo"></div>
+    <div class="row"><label>Quanto da palavra em negrito</label><input type="range" min="0.2" max="0.7" step="0.05" data-k="bionic.strength"><output data-o="bionic.strength" data-fmt="pct"></output></div>
+    <div class="row"><label>Esmaecer o resto da palavra</label><label class="sw"><input type="checkbox" data-k="bionic.fadeRest"><i></i></label></div>
+    <div class="hint">Atalho: Alt+Shift+B</div>
+  </div>
+</details>
+
+<details>
+  <summary>Régua de leitura <label class="sw"><input type="checkbox" data-k="ruler.on"><i></i></label><span class="chev">›</span></summary>
+  <div class="body">
+    <div class="row"><label>Tipo</label><select data-k="ruler.mode"><option value="line">Faixa colorida</option><option value="mask">Janela (escurece o resto)</option></select></div>
+    <div class="row"><label>Altura</label><input type="range" min="20" max="160" step="2" data-k="ruler.height"><output data-o="ruler.height" data-fmt="px"></output></div>
+    <div class="row"><label>Cor da faixa</label><div class="swatches" data-sw="ruler.color" data-colors="#ffd54f,#80deea,#a5d6a7,#f48fb1,#ce93d8"></div></div>
+    <div class="row"><label>Intensidade</label><input type="range" min="0.1" max="0.8" step="0.05" data-k="ruler.opacity"><output data-o="ruler.opacity" data-fmt="pct"></output></div>
+    <div class="hint">A régua segue o mouse. Atalho: Alt+Shift+R</div>
+  </div>
+</details>
+
+<details>
+  <summary>Leitura guiada <label class="sw"><input type="checkbox" data-k="guided.on"><i></i></label><span class="chev">›</span></summary>
+  <div class="body">
+    <div class="hint">Mostra um parágrafo por vez e esmaece o resto. Avance com <b>Alt+↓</b>, volte com <b>Alt+↑</b>, ou clique no parágrafo. Atalho: Alt+Shift+G</div>
+  </div>
+</details>
+
+<details>
+  <summary>Fonte e espaçamento<span class="chev">›</span></summary>
+  <div class="body">
+    <div class="row"><label>Fonte</label>
+      <select data-k="font.family">
+        <option value="default">Original do site</option>
+        <option value="lexend">Lexend (feita p/ fluência)</option>
+        <option value="atkinson">Atkinson Hyperlegible</option>
+        <option value="opendyslexic">OpenDyslexic</option>
+        <option value="verdana">Verdana</option>
+        <option value="arial">Arial</option>
+      </select></div>
+    <div class="row"><label>Ajustar espaçamento</label><label class="sw"><input type="checkbox" data-k="spacing.on"><i></i></label></div>
+    <div class="row"><label>Entre linhas</label><input type="range" min="1.2" max="2.6" step="0.1" data-k="spacing.lineHeight"><output data-o="spacing.lineHeight" data-fmt="x"></output></div>
+    <div class="row"><label>Entre letras</label><input type="range" min="0" max="0.2" step="0.01" data-k="spacing.letterSpacing"><output data-o="spacing.letterSpacing" data-fmt="em"></output></div>
+    <div class="row"><label>Entre palavras</label><input type="range" min="0" max="0.6" step="0.02" data-k="spacing.wordSpacing"><output data-o="spacing.wordSpacing" data-fmt="em"></output></div>
+  </div>
+</details>
+
+<details>
+  <summary>Filtro de cor <label class="sw"><input type="checkbox" data-k="tint.on"><i></i></label><span class="chev">›</span></summary>
+  <div class="body">
+    <div class="row"><label>Cor</label><div class="swatches" data-sw="tint.color" data-colors="#fff3c4,#ffd6a5,#c8f7c5,#cde7ff,#e8d5ff,#ffc9de"></div></div>
+    <div class="row"><label>Intensidade</label><input type="range" min="0.05" max="0.6" step="0.05" data-k="tint.opacity"><output data-o="tint.opacity" data-fmt="pct"></output></div>
+    <div class="hint">Tira o branco "estourado" da tela. Teste algumas cores: cada pessoa se dá melhor com uma.</div>
+  </div>
+</details>
+
+<details>
+  <summary>Voz alta<span class="chev">›</span></summary>
+  <div class="body">
+    <div class="row"><label>Voz</label><select id="voice" data-k="tts.voiceURI"></select></div>
+    <div class="row"><label>Velocidade</label><input type="range" min="0.5" max="2.5" step="0.1" data-k="tts.rate"><output data-o="tts.rate" data-fmt="x"></output></div>
+    <div class="row"><label>Rolar junto com a leitura</label><label class="sw"><input type="checkbox" data-k="tts.followScroll"><i></i></label></div>
+    <div class="hint">A palavra lida fica destacada. Vozes "Online (Natural)" da Microsoft soam melhor; algumas vozes do Google não informam a palavra atual, aí só a frase fica destacada.</div>
+  </div>
+</details>
+
+<details>
+  <summary>Foco e distrações<span class="chev">›</span></summary>
+  <div class="body">
+    <div class="row"><label>Parar animações e vídeos automáticos</label><label class="sw"><input type="checkbox" data-k="motion.reduce"><i></i></label></div>
+    <div class="row"><label>Barra de progresso + tempo restante</label><label class="sw"><input type="checkbox" data-k="progress.on"><i></i></label></div>
+    <div class="row"><label>Sua velocidade de leitura</label><input type="range" min="100" max="400" step="10" data-k="progress.wpm"><output data-o="progress.wpm" data-fmt="wpm"></output></div>
+    <div class="row"><label>Bloco de foco</label><input type="range" min="5" max="50" step="5" data-k="timer.focusMin"><output data-o="timer.focusMin" data-fmt="min"></output></div>
+    <div class="row"><label>Pausa</label><input type="range" min="2" max="15" step="1" data-k="timer.breakMin"><output data-o="timer.breakMin" data-fmt="min"></output></div>
+  </div>
+</details>
+
+<div class="site"><span id="siteName">este site</span>Ativo aqui<label class="sw"><input type="checkbox" id="siteOn"><i></i></label></div>
+
+<footer>
+  <button id="allNotes">Todas as marcações</button>
+  <button id="shortcuts">Atalhos</button>
+</footer>
+<script src="defaults.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

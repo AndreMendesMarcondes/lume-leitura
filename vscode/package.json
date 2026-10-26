@@ -1,0 +1,89 @@
+{
+  "name": "lume-leitura",
+  "displayName": "Lume — Leitura com Foco",
+  "description": "Bionic reading, foco de parágrafo, leitura guiada, leitura em voz alta com palavra destacada, marca-texto com notas, timer de foco e modo leitura — no editor e no preview de Markdown.",
+  "version": "1.0.0",
+  "publisher": "andre-marcondes",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "engines": { "vscode": "^1.80.0" },
+  "categories": ["Other", "Visualization"],
+  "keywords": ["tdah", "adhd", "bionic reading", "foco", "leitura", "acessibilidade", "dislexia"],
+  "main": "./src/extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "repository": { "type": "git", "url": "https://example.invalid/lume" },
+  "contributes": {
+    "commands": [
+      { "command": "lume.menu", "title": "Lume: Menu" },
+      { "command": "lume.toggleBionic", "title": "Lume: Liga/desliga Bionic Reading" },
+      { "command": "lume.cycleFocus", "title": "Lume: Trocar foco (desligado → linha → parágrafo)" },
+      { "command": "lume.toggleGuided", "title": "Lume: Liga/desliga leitura guiada" },
+      { "command": "lume.guidedNext", "title": "Lume: Próximo parágrafo" },
+      { "command": "lume.guidedPrev", "title": "Lume: Parágrafo anterior" },
+      { "command": "lume.readAloud", "title": "Lume: Ler em voz alta a partir do cursor/seleção" },
+      { "command": "lume.stopReading", "title": "Lume: Parar leitura em voz alta" },
+      { "command": "lume.chooseVoice", "title": "Lume: Escolher voz" },
+      { "command": "lume.highlight", "title": "Lume: Marcar seleção" },
+      { "command": "lume.addNote", "title": "Lume: Marcar seleção com nota" },
+      { "command": "lume.removeHighlight", "title": "Lume: Remover marcação sob o cursor" },
+      { "command": "lume.exportHighlights", "title": "Lume: Exportar marcações (Markdown)" },
+      { "command": "lume.toggleTimer", "title": "Lume: Iniciar/parar timer de foco" },
+      { "command": "lume.toggleReadingMode", "title": "Lume: Liga/desliga modo leitura (fonte, espaçamento, zen)" }
+    ],
+    "keybindings": [
+      { "command": "lume.menu", "key": "alt+l m" },
+      { "command": "lume.toggleBionic", "key": "alt+l b" },
+      { "command": "lume.cycleFocus", "key": "alt+l f" },
+      { "command": "lume.toggleGuided", "key": "alt+l g" },
+      { "command": "lume.readAloud", "key": "alt+l r" },
+      { "command": "lume.stopReading", "key": "alt+l s" },
+      { "command": "lume.stopReading", "key": "escape", "when": "lume.reading && editorTextFocus" },
+      { "command": "lume.highlight", "key": "alt+l h", "when": "editorHasSelection" },
+      { "command": "lume.addNote", "key": "alt+l n", "when": "editorHasSelection" },
+      { "command": "lume.toggleTimer", "key": "alt+l t" },
+      { "command": "lume.toggleReadingMode", "key": "alt+l l" },
+      { "command": "lume.guidedNext", "key": "alt+j", "when": "lume.guided && editorTextFocus" },
+      { "command": "lume.guidedPrev", "key": "alt+k", "when": "lume.guided && editorTextFocus" }
+    ],
+    "menus": {
+      "editor/context": [
+        { "command": "lume.readAloud", "group": "lume@1" },
+        { "command": "lume.highlight", "group": "lume@2", "when": "editorHasSelection" },
+        { "command": "lume.addNote", "group": "lume@3", "when": "editorHasSelection" }
+      ]
+    },
+    "configuration": {
+      "title": "Lume",
+      "properties": {
+        "lume.bionic.enabled": { "type": "boolean", "default": false, "description": "Bionic reading: deixa em negrito o começo de cada palavra." },
+        "lume.bionic.strength": { "type": "number", "default": 0.45, "minimum": 0.2, "maximum": 0.7, "description": "Fração da palavra em negrito (0.2 a 0.7)." },
+        "lume.bionic.fadeRest": { "type": "boolean", "default": false, "description": "Esmaece o resto da palavra para o começo saltar mais." },
+        "lume.bionic.scope": { "type": "string", "enum": ["all", "prose", "comments"], "default": "all",
+          "enumDescriptions": ["Tudo (código e texto)", "Só Markdown e texto puro", "Só comentários no código (texto inteiro em Markdown/txt)"],
+          "description": "Onde aplicar o bionic reading." },
+        "lume.bionic.splitIdentifiers": { "type": "boolean", "default": true, "description": "Em código, trata cada parte de camelCase/snake_case como palavra (getUserName → get User Name)." },
+        "lume.focus.mode": { "type": "string", "enum": ["off", "line", "paragraph"], "default": "off", "description": "Esmaece tudo fora da linha ou do parágrafo do cursor." },
+        "lume.focus.dimOpacity": { "type": "number", "default": 0.3, "minimum": 0.05, "maximum": 0.9, "description": "Opacidade do texto fora do foco." },
+        "lume.tts.voice": { "type": "string", "default": "", "description": "Nome da voz (vazio = melhor voz pt-BR instalada). Use o comando 'Lume: Escolher voz'." },
+        "lume.tts.rate": { "type": "integer", "default": 0, "minimum": -10, "maximum": 10, "description": "Velocidade da voz no Windows (-10 a 10, 0 = normal)." },
+        "lume.tts.follow": { "type": "boolean", "default": true, "description": "Rola o editor junto com a leitura." },
+        "lume.timer.focusMinutes": { "type": "integer", "default": 15, "minimum": 5, "maximum": 60 },
+        "lume.timer.breakMinutes": { "type": "integer", "default": 5, "minimum": 1, "maximum": 30 },
+        "lume.progress.enabled": { "type": "boolean", "default": true, "description": "Mostra % lido e tempo restante na barra de status (Markdown/texto)." },
+        "lume.progress.wpm": { "type": "integer", "default": 200, "description": "Sua velocidade de leitura (palavras por minuto)." },
+        "lume.readingMode.fontFamily": { "type": "string", "default": "Lexend, 'Atkinson Hyperlegible', Verdana, sans-serif", "description": "Fonte usada no modo leitura (precisa estar instalada no Windows)." },
+        "lume.readingMode.fontSize": { "type": "integer", "default": 17 },
+        "lume.readingMode.lineHeight": { "type": "number", "default": 1.9, "description": "Altura de linha no modo leitura (multiplicador)." },
+        "lume.readingMode.letterSpacing": { "type": "number", "default": 0.4, "description": "Espaço entre letras no modo leitura (px)." },
+        "lume.readingMode.zen": { "type": "boolean", "default": true, "description": "Entra no Zen Mode junto com o modo leitura." },
+        "lume.preview.font": { "type": "string", "enum": ["default", "lexend", "atkinson", "opendyslexic"], "default": "lexend", "description": "Fonte do preview de Markdown quando o Lume está ativo no preview." },
+        "lume.preview.enabled": { "type": "boolean", "default": true, "description": "Aplica o Lume (bionic, fonte, espaçamento, régua, guiada) no preview de Markdown." },
+        "lume.preview.ruler": { "type": "boolean", "default": false, "description": "Régua de leitura que segue o mouse no preview." },
+        "lume.preview.tint": { "type": "string", "default": "", "description": "Cor de filtro no preview (ex.: #fff3c4). Vazio = sem filtro." }
+      }
+    },
+    "markdown.markdownItPlugins": true,
+    "markdown.previewScripts": ["./media/preview.js"],
+    "markdown.previewStyles": ["./media/preview.css"]
+  }
+}

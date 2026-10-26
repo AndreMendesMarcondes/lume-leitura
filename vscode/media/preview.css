@@ -1,0 +1,26 @@
+@font-face { font-family: "Lume Lexend"; font-weight: 400; src: url("./fonts/lexend-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lume Lexend"; font-weight: 700; src: url("./fonts/lexend-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lume Atkinson"; font-weight: 400; src: url("./fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lume Atkinson"; font-weight: 700; src: url("./fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lume OpenDyslexic"; font-weight: 400; src: url("./fonts/opendyslexic-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lume OpenDyslexic"; font-weight: 700; src: url("./fonts/opendyslexic-latin-700-normal.woff2") format("woff2"); }
+
+html[data-lume-font="lexend"] body { font-family: "Lume Lexend", sans-serif !important; }
+html[data-lume-font="atkinson"] body { font-family: "Lume Atkinson", sans-serif !important; }
+html[data-lume-font="opendyslexic"] body { font-family: "Lume OpenDyslexic", sans-serif !important; }
+
+html.lume-on body { line-height: 1.85 !important; letter-spacing: .02em; word-spacing: .1em; max-width: 78ch; margin: 0 auto; }
+html.lume-on body :is(p, li) { margin-bottom: .9em; }
+
+b.lume-b { font-weight: 700; }
+html.lume-fade .lume-r { opacity: .62; }
+
+html.lume-guided .lume-blk { transition: opacity .18s; }
+html.lume-guided .lume-blk:not(.lume-cur) { opacity: .2; }
+html.lume-guided .lume-cur { box-shadow: -6px 0 0 0 rgba(255, 193, 7, .9); }
+
+#lume-ui .lume-tint { position: fixed; inset: 0; pointer-events: none; mix-blend-mode: multiply; opacity: .25; display: none; z-index: 9998; }
+#lume-ui .lume-ruler { position: fixed; left: 0; right: 0; height: 42px; pointer-events: none; background: rgba(255, 213, 79, .28);
+  mix-blend-mode: multiply; display: none; z-index: 9999; }
+.vscode-dark #lume-ui .lume-ruler, .vscode-high-contrast #lume-ui .lume-ruler { mix-blend-mode: screen; background: rgba(255, 213, 79, .14); }
+#lume-ui .lume-progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: #ffb300; z-index: 10000; pointer-events: none; }

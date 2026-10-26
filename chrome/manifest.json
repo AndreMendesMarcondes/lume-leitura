@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Lume — Leitura com Foco",
+  "short_name": "Lume",
+  "version": "1.0.0",
+  "description": "Bionic reading, régua de leitura, fontes legíveis, modo leitor, leitura em voz alta, leitura guiada, marca-texto e timer de foco.",
+  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "permissions": ["storage", "notifications", "alarms", "contextMenus"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html", "default_title": "Lume" },
+  "options_page": "notes.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["defaults.js", "lib/Readability.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    { "resources": ["fonts/*"], "matches": ["<all_urls>"] }
+  ],
+  "commands": {
+    "toggle-bionic":  { "suggested_key": { "default": "Alt+Shift+B" }, "description": "Liga/desliga Bionic Reading" },
+    "toggle-ruler":   { "suggested_key": { "default": "Alt+Shift+R" }, "description": "Liga/desliga régua de leitura" },
+    "toggle-reader":  { "suggested_key": { "default": "Alt+Shift+L" }, "description": "Abre/fecha o modo leitor" },
+    "toggle-guided":  { "suggested_key": { "default": "Alt+Shift+G" }, "description": "Liga/desliga leitura guiada" },
+    "tts-toggle":     { "description": "Ler em voz alta / pausar" },
+    "toggle-timer":   { "description": "Inicia/para o timer de foco" },
+    "highlight-selection": { "description": "Marcar o texto selecionado" }
+  }
+}

@@ -1,0 +1,102 @@
+/* ========== Fontes (carregadas do pacote da extensão) ========== */
+@font-face { font-family: "Lume Lexend"; font-weight: 400; font-display: swap;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/lexend-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lume Lexend"; font-weight: 700; font-display: swap;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/lexend-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lume Atkinson"; font-weight: 400; font-display: swap;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lume Atkinson"; font-weight: 700; font-display: swap;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lume OpenDyslexic"; font-weight: 400; font-display: swap;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/opendyslexic-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lume OpenDyslexic"; font-weight: 700; font-display: swap;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/opendyslexic-latin-700-normal.woff2") format("woff2"); }
+
+/* Aplica a fonte em tudo, menos código e fontes de ícone (senão ícones viram letras). */
+html[data-lume-font] body :not(pre):not(code):not(kbd):not(samp):not(i):not(svg):not(svg *)
+  :not([class*="icon" i]):not([class*="fa-"]):not([class^="fa"]):not(.material-icons):not([class*="material-symbols"]):not([class*="glyph" i]) {
+  font-family: var(--lume-font) !important;
+}
+
+/* ========== Espaçamento ========== */
+html.lume-spacing :is(p, li, dd, dt, blockquote, figcaption, td, th, h1, h2, h3, h4, h5, h6),
+html.lume-spacing :is(p, li, dd, dt, blockquote, figcaption, td, th) * {
+  line-height: var(--lume-lh) !important;
+  letter-spacing: var(--lume-ls) !important;
+  word-spacing: var(--lume-ws) !important;
+}
+
+/* ========== Bionic reading ========== */
+b.lume-b { font-weight: 700 !important; font-style: inherit; color: inherit; }
+html.lume-fade .lume-bw { color: color-mix(in srgb, var(--lume-c, currentColor) 62%, transparent) !important; }
+html.lume-fade .lume-bw > b.lume-b { color: var(--lume-c, currentColor) !important; }
+
+/* ========== Reduzir movimento ========== */
+html.lume-still *, html.lume-still *::before, html.lume-still *::after {
+  animation-duration: 0.001s !important; animation-iteration-count: 1 !important;
+  transition-duration: 0.001s !important; scroll-behavior: auto !important;
+}
+
+/* ========== Leitura guiada ========== */
+html.lume-guided .lume-blk { transition: opacity .18s ease; }
+html.lume-guided .lume-blk:not(.lume-cur) { opacity: .2 !important; }
+html.lume-guided .lume-blk.lume-cur {
+  opacity: 1 !important;
+  box-shadow: -6px 0 0 0 rgba(255, 193, 7, .9);
+  border-radius: 2px;
+}
+
+/* ========== Marca-texto ========== */
+mark.lume-hl { color: inherit !important; border-radius: 0; padding: 0; margin: 0; cursor: pointer; }
+mark.lume-hl[data-color="yellow"] { background: rgba(255, 230, 0, .55) !important; }
+mark.lume-hl[data-color="green"]  { background: rgba(110, 231, 120, .55) !important; }
+mark.lume-hl[data-color="pink"]   { background: rgba(255, 128, 191, .5) !important; }
+mark.lume-hl[data-color="blue"]   { background: rgba(110, 180, 255, .5) !important; }
+mark.lume-hl[data-note]:not([data-note=""]) { border-bottom: 2px dotted rgba(0,0,0,.55); }
+mark.lume-hl.lume-flash { outline: 3px solid #ff9800; }
+
+/* ========== Voz alta: palavra e frase atuais (CSS Custom Highlight API) ========== */
+::highlight(lume-sentence) { background-color: rgba(120, 180, 255, .22); }
+::highlight(lume-word) { background-color: #ffd54f; color: #111; }
+
+/* ========== Modo leitor ========== */
+html.lume-reading > body > *:not(#lume-reader):not(#lume-host) { display: none !important; }
+html.lume-reading, html.lume-reading > body { overflow: auto !important; background: var(--lr-bg) !important; }
+#lume-reader {
+  all: initial; display: block; box-sizing: border-box; min-height: 100vh;
+  background: var(--lr-bg); color: var(--lr-fg);
+  font-family: var(--lume-font, Georgia, "Times New Roman", serif);
+  font-size: var(--lr-size); line-height: 1.75;
+  padding: 56px 20px 160px;
+}
+#lume-reader * { box-sizing: border-box; }
+#lume-reader .lr-wrap { max-width: var(--lr-width); margin: 0 auto; }
+#lume-reader .lr-bar {
+  position: sticky; top: 0; z-index: 2; display: flex; gap: 8px; align-items: center; justify-content: flex-end;
+  max-width: var(--lr-width); margin: -40px auto 24px; padding: 8px 0; background: var(--lr-bg);
+  font: 13px/1.2 system-ui, sans-serif;
+}
+#lume-reader .lr-bar button {
+  all: unset; cursor: pointer; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--lr-line);
+  color: var(--lr-fg); font: 13px/1.2 system-ui, sans-serif;
+}
+#lume-reader .lr-bar button:hover { background: var(--lr-line); }
+#lume-reader h1.lr-title { font-size: 1.7em; line-height: 1.25; margin: 0 0 .3em; font-weight: 700; color: var(--lr-fg); font-family: inherit; }
+#lume-reader .lr-meta { opacity: .65; font-size: .8em; margin-bottom: 2em; }
+#lume-reader .lr-body p, #lume-reader .lr-body li, #lume-reader .lr-body blockquote { margin: 0 0 1em; }
+#lume-reader .lr-body h1, #lume-reader .lr-body h2, #lume-reader .lr-body h3, #lume-reader .lr-body h4 {
+  font-family: inherit; color: var(--lr-fg); line-height: 1.3; margin: 1.6em 0 .6em; font-weight: 700; }
+#lume-reader .lr-body h2 { font-size: 1.35em; } #lume-reader .lr-body h3 { font-size: 1.15em; }
+#lume-reader .lr-body a { color: var(--lr-link); }
+#lume-reader .lr-body img, #lume-reader .lr-body video, #lume-reader .lr-body figure { max-width: 100%; height: auto; }
+#lume-reader .lr-body pre, #lume-reader .lr-body code {
+  font-family: ui-monospace, Consolas, monospace; font-size: .85em; background: var(--lr-line); border-radius: 4px; }
+#lume-reader .lr-body pre { padding: 12px; overflow: auto; }
+#lume-reader .lr-body ul, #lume-reader .lr-body ol { padding-left: 1.4em; margin: 0 0 1em; }
+#lume-reader .lr-body blockquote { border-left: 4px solid var(--lr-line); padding-left: 1em; opacity: .9; }
+#lume-reader .lr-body table { border-collapse: collapse; margin-bottom: 1em; }
+#lume-reader .lr-body td, #lume-reader .lr-body th { border: 1px solid var(--lr-line); padding: 4px 8px; }
+
+html.lume-theme-light { --lr-bg: #ffffff; --lr-fg: #1d1d1f; --lr-line: #e6e6e6; --lr-link: #0b57d0; }
+html.lume-theme-sepia { --lr-bg: #f6efdf; --lr-fg: #3b2f22; --lr-line: #e5dac2; --lr-link: #8a4b0f; }
+html.lume-theme-dark  { --lr-bg: #1b1d21; --lr-fg: #d9dbe0; --lr-line: #2e3238; --lr-link: #8ab4f8; }
